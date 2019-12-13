@@ -16,4 +16,6 @@ const validateRules = (req, res, next) => {
     });
 };
 
-module.exports = validateRules;
+module.exports = {
+    validateRules,
+};

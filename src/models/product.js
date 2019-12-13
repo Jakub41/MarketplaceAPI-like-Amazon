@@ -1,10 +1,11 @@
 // The data file JSON
 const filename = "../db/products.json";
+const writeFilePath = __dirname + "/../db/products.json";
 
 // We assign the data
 let products = require(filename);
 
-// We import the helpers as wqe need to interact with our data
+// We import the helpers as we need to interact with our data
 const helper = require("../helpers/helper");
 
 // GET All Products
@@ -24,7 +25,7 @@ const createProduct = newProduct => {
 
         newProduct = { ...id, ...date, ...newProduct };
         products.push(newProduct);
-        helper.writeJSONFile(filename, products);
+        helper.writeJSONFile(writeFilePath, products);
         resolve(newProduct).catch(err => reject(err));
     });
 };

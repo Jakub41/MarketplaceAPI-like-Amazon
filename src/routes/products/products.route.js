@@ -15,6 +15,7 @@ const {
 // Add a new product
 // Validate the rules before start
 router.post("/", productValidationRulesPOST, validateRules, (req, res) => {
+
     // product
     product
         // Using the model to create a Product
