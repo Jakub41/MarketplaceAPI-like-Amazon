@@ -2,7 +2,7 @@
 const { body } = require("express-validator");
 
 // Product fields validations
-const productValidationRules = () => {
+const productValidationRulesPOST = () => {
     return [
         // Name must be min 3 characters and required
         body("name", "Name is required and 3 characters at least")
@@ -31,5 +31,5 @@ const productValidationRules = () => {
 
 // Exports the required methods
 module.exports = {
-    productValidationRules
+    productValidationRulesPOST
 }
