@@ -1,0 +1,26 @@
+{
+  "name": "marketplaceapi",
+  "version": "1.0.0",
+  "description": "A demo of a marketplace API similar to Amazon ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/Jakub41/MarketplaceAPI-like-Amazon.git"
+  },
+  "keywords": [
+    "Node",
+    "NodeJS",
+    "Express",
+    "ExpressJS",
+    "Amazon"
+  ],
+  "author": "Team Google",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Jakub41/MarketplaceAPI-like-Amazon/issues"
+  },
+  "homepage": "https://github.com/Jakub41/MarketplaceAPI-like-Amazon#readme"
+}
