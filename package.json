@@ -4,7 +4,9 @@
   "description": "A demo of a marketplace API similar to Amazon ",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon --delay -r dotenv/config ./index.js",
+    "debug": "nodemon --inspect -r dotenv/config ./index.js"
   },
   "repository": {
     "type": "git",
