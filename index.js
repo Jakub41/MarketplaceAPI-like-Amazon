@@ -25,8 +25,27 @@ server.use(cors());
 // "tiny" The minimal output of the log the default light param
 server.use(morgan("tiny"));
 
+// Express JSON
+// Returns middleware that only parses json
+server.use(express.json());
+
+// Express urlencoded
+// Returns middleware that only parses urlencoded with the QueryString module
+/**
+ * You NEED express.json() and express.urlencoded()
+ * for POST and PUT requests,
+ * because in both these requests you are sending data (in the form of some data object)
+ * to the server and you are asking the server to accept or store that data (object),
+ * which is enclosed in the body (i.e. req.body) of that (POST or PUT) Request
+ *
+ */
+server.use(express.urlencoded({ extended: true }));
+
 // Using the Body parser lib
 server.use(bodyParser.json());
+
+// Main Routing
+server.use(require('./src/routes/index.routes'))
 
 // Starting the server on env port
 server.listen(`${port}`, () => {
