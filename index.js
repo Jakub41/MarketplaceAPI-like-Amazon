@@ -18,6 +18,9 @@ const morgan = require("morgan");
 // Defining the server/app
 const server = express();
 
+// List routes
+const listEndpoints = require("express-list-endpoints");
+
 // Using CORS
 server.use(cors());
 
@@ -50,6 +53,9 @@ server.use(bodyParser.json());
 
 // Main Routing
 server.use(require("./src/routes/index.routes"));
+
+// Endpoints list
+console.log(listEndpoints(server));
 
 // Starting the server on env port
 server.listen(`${port}`, () => {
