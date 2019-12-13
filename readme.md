@@ -3,6 +3,7 @@
 ## Structure of the project
 
 📦MarketplaceAPI
+
 ┣ 📂src
 ┃ ┣ 📂config
 ┃ ┃ ┗ 📜config.js
