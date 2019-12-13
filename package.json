@@ -39,6 +39,7 @@
     "nodemon": "^2.0.2"
   },
   "dependencies": {
+    "express-validator": "^6.3.0",
     "uuid": "^3.3.3"
   }
 }
