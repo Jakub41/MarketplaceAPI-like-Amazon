@@ -8,20 +8,22 @@ const product = require("../../models/product");
 const {
     validateRules
 } = require("../../middlewares/validatorRules.middleware");
-const { productValidationRulesPOST } = require("../../middlewares/validators.middleware");
+const {
+    productValidationRulesPOST
+} = require("../../middlewares/validators.middleware");
 
 // Add a new product
 // Validate the rules before start
-router.post("/", productValidationRulesPOST(), validateRules, async (req, res) => {
-    // Waiting for product
-    await product
+router.post("/", productValidationRulesPOST, validateRules, (req, res) => {
+    // product
+    product
         // Using the model to create a Product
         .createProduct(req.body)
-        .then(product =>
+        .then( data =>
             // OK product is created
             res.status(201).json({
-                message: `The product #${product.id} has been created`,
-                content: product
+                message: `The product #${data.id} has been created`,
+                content: data
             })
         )
         // Error product not created
