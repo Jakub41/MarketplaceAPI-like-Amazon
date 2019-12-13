@@ -8,7 +8,7 @@ const uuidv4 = require("uuid/v4")
 
 // Helper to set a random UUID
 const getNewId = () => {
-    uuidv4();
+    return uuidv4();
 };
 
 // Helper to new Date()
@@ -17,7 +17,7 @@ const getNewId = () => {
 // That result is the server date in ISO 8601
 const newDate = () => {
     // converting Date to be a string
-    new Date().toString();
+    return new Date().toString();
 };
 
 // Helper to check if a row exist by ID and return a promise
