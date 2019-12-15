@@ -1,5 +1,5 @@
 // Adding body module of express validator
-const { body, check } = require("express-validator");
+const { body } = require("express-validator");
 
 // Product fields validations
 const productValidationRulesPOST = [
@@ -29,5 +29,5 @@ const productValidationRulesPOST = [
 
 // Exports the required methods
 module.exports = {
-    productValidationRulesPOST,
+    productValidationRulesPOST
 };

@@ -21,7 +21,14 @@ const getAllProducts = () => {
 };
 
 // GET One Product
-const getOneProduct = id => {};
+const getOneProduct = id => {
+    return new Promise((resolve, reject) => {
+        helper
+            .mustBeInArray(products, id)
+            .then(product => resolve(product))
+            .catch(err => reject(err));
+    });
+};
 
 // POST Create the Product
 const createProduct = newProduct => {
