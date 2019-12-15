@@ -12,9 +12,11 @@ const {
     productValidationRulesPOST
 } = require("../../middlewares/validators.middleware");
 
+const { checkProductNameExist: pName } = require("../../middlewares/isExist")
+
 // Add a new product
 // Validate the rules before start
-router.post("/", productValidationRulesPOST, validateRules, (req, res) => {
+router.post("/", productValidationRulesPOST, validateRules, pName, (req, res) => {
 
     // product
     product
