@@ -6,17 +6,17 @@ const router = express.Router();
 const product = require("../../models/product");
 // Validations middleware
 const {
-    validateRules
+    validateRules: rules
 } = require("../../middlewares/validatorRules.middleware");
 const {
-    productValidationRulesPOST
+    productValidationRulesPOST: newProduct
 } = require("../../middlewares/validators.middleware");
 
-const { checkProductNameExist: pName } = require("../../middlewares/isExist")
+const { checkProductNameExist: productName } = require("../../middlewares/isExist")
 
 // Add a new product
 // Validate the rules before start
-router.post("/", productValidationRulesPOST, validateRules, pName, (req, res) => {
+router.post("/", newProduct, rules, productName, (req, res) => {
 
     // product
     product
