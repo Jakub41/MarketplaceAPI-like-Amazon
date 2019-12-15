@@ -8,7 +8,17 @@ let products = require(writeFilePath);
 const helper = require("../helpers/helper");
 
 // GET All Products
-const getAllProducts = () => {};
+const getAllProducts = () => {
+    return new Promise((resolve, reject) => {
+        if (products.length === 0) {
+            reject({
+                message: "no products available",
+                status: 202
+            });
+        }
+        resolve(products).catch(err => reject(err));
+    });
+};
 
 // GET One Product
 const getOneProduct = id => {};

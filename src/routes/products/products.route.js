@@ -7,6 +7,22 @@ const product = require("../../models/product");
 // Validations middleware
 const check = require("../../middlewares/index.middleware");
 
+// GET all Products
+router.get('/', async (req, res) => {
+    // Await response server
+    await product.getAllProducts()
+    // Result the all Products
+    .then(products => res.json(products))
+    // If any errors
+    .catch(err => {
+        if (err.status) {
+            res.status(err.status).json({ message: err.message })
+        } else {
+            res.status(500).json({ message: err.message })
+        }
+    })
+})
+
 // Add a new product
 // Validate the rules before start
 router.post(
