@@ -83,7 +83,18 @@ const updateProduct = (id, newProduct) => {
 };
 
 // Delete Product
-const deleteProduct = id => {};
+const deleteProduct = id => {
+    return new Promise((resolve, reject) => {
+        helper
+            .mustBeInArray(products, id)
+            .then(() => {
+                products = products.filter(p => p.id !== id);
+                helper.writeJSONFile(writeFilePath, products);
+                resolve();
+            })
+            .catch(err => reject(err));
+    });
+};
 
 // Exporting the modules
 module.exports = {

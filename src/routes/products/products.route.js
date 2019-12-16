@@ -64,14 +64,39 @@ router.post(
 );
 
 // PUT Update the product
-router.put("/:id", check.isValidId, check.updateProduct, check.rules, async (req, res) => {
+router.put(
+    "/:id",
+    check.isValidId,
+    check.updateProduct,
+    check.rules,
+    async (req, res) => {
+        const id = req.params.id;
+        await product
+            .updateProduct(id, req.body)
+            .then(product =>
+                res.json({
+                    message: `The product #${id} has been updated`,
+                    content: product
+                })
+            )
+            .catch(err => {
+                if (err.status) {
+                    res.status(err.status).json({ message: err.message });
+                }
+                res.status(500).json({ message: err.message });
+            });
+    }
+);
+
+// DELETE a product
+router.delete("/:id", check.isValidId, async (req, res) => {
     const id = req.params.id;
+
     await product
-        .updateProduct(id, req.body)
+        .deleteProduct(id)
         .then(product =>
             res.json({
-                message: `The product #${id} has been updated`,
-                content: product
+                message: `The product #${id} has been deleted`
             })
         )
         .catch(err => {
