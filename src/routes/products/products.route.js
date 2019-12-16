@@ -64,21 +64,27 @@ router.post(
 );
 
 // PUT Update the product
+// Validate id, fields and rules before update
 router.put(
     "/:id",
     check.isValidId,
     check.updateProduct,
     check.rules,
     async (req, res) => {
+        // Request ID
         const id = req.params.id;
+        // Await th product
         await product
+            // Call model to update the product
             .updateProduct(id, req.body)
+            // Response a message
             .then(product =>
                 res.json({
                     message: `The product #${id} has been updated`,
                     content: product
                 })
             )
+            // Errors if any
             .catch(err => {
                 if (err.status) {
                     res.status(err.status).json({ message: err.message });
@@ -89,16 +95,20 @@ router.put(
 );
 
 // DELETE a product
+// Validate the ID before delete
 router.delete("/:id", check.isValidId, async (req, res) => {
     const id = req.params.id;
-
+    // Await server
     await product
+        // Model delete product
         .deleteProduct(id)
         .then(product =>
+            // Response
             res.json({
                 message: `The product #${id} has been deleted`
             })
         )
+        // Any error
         .catch(err => {
             if (err.status) {
                 res.status(err.status).json({ message: err.message });

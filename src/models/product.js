@@ -85,8 +85,10 @@ const updateProduct = (id, newProduct) => {
 // Delete Product
 const deleteProduct = id => {
     return new Promise((resolve, reject) => {
+        // Check if it is part of an array
         helper
             .mustBeInArray(products, id)
+            // Filter the product id to delete and write
             .then(() => {
                 products = products.filter(p => p.id !== id);
                 helper.writeJSONFile(writeFilePath, products);
