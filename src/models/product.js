@@ -1,5 +1,8 @@
+// Data Utilities
+const f = require("../shared/utilitis")
+
 // The data file JSON
-const writeFilePath = __dirname + "/../db/products.json";
+const writeFilePath = f.productDir;
 
 // We assign the data
 let products = require(writeFilePath);
