@@ -8,7 +8,7 @@ const product = require("../../models/product");
 const check = require("../../middlewares/index.middleware");
 
 // GET all Products
-router.get("/", async (req, res) => {
+router.get("/", check.rules, async (req, res) => {
     // Await response server
     await product
         .getAllProducts()
@@ -25,7 +25,7 @@ router.get("/", async (req, res) => {
 });
 
 // GET one product
-router.get("/:id", check.isValidId, async (req, res) => {
+router.get("/:id", check.isValidId, check.rules, async (req, res) => {
     const id = req.params.id;
     await product
         .getOneProduct(id)
@@ -64,7 +64,7 @@ router.post(
 );
 
 // PUT Update the product
-router.put("/:id", check.isValidId, check.updateProduct, async (req, res) => {
+router.put("/:id", check.isValidId, check.updateProduct, check.rules, async (req, res) => {
     const id = req.params.id;
     await product
         .updateProduct(id, req.body)

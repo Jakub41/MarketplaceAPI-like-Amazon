@@ -28,9 +28,6 @@ const productValidationRulesPOST = [
 ];
 
 const productUpdateRules = [
-    body("id", "Product ID required")
-        .exists()
-        .isNumeric(), // <-- required identifier
     oneOf(
         // <-- one of the following must exist
         [

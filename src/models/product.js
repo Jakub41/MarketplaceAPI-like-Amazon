@@ -1,5 +1,5 @@
 // Data Utilities
-const f = require("../shared/utilitis")
+const f = require("../shared/utilitis");
 
 // The data file JSON
 const writeFilePath = f.productDir;
@@ -59,21 +59,27 @@ const createProduct = newProduct => {
 // PUT Update the Product
 const updateProduct = (id, newProduct) => {
     return new Promise((resolve, reject) => {
-        helper.mustBeInArray(products, id)
-        .then(products => {
-            console.log(products)
-            const index = products.findIndex(p => p.id === products.id)
-            id = { id: products.id }
-            const date = {
-                created_at: products.created_at,
-                updated_at: helper.newDate()
-            }
-            products[index] = { ...id, ...date, ...newProduct }
-            helper.writeJSONFile(writeFilePath, products)
-            resolve(products[index])
-        })
-        .catch(err => reject(err))
-    })
+        helper
+            .mustBeInArray(products, id)
+            .then(product => {
+                //pass product as a result instead of products
+                //now it should show the products array
+                //the following returns the element that passes the check
+                const index = products.findIndex(prod => prod.id == id);
+                let updateId = { id: product.id };
+                const date = {
+                    created_at: product.created_at,
+                    // Update only the updated at date time
+                    updated_at: helper.newDate()
+                };
+                // Merging new data with old data
+                let updatedProduct = { ...products[index], ...newProduct };
+                products[index] = { ...updateId, ...updatedProduct, ...date };
+                helper.writeJSONFile(writeFilePath, products);
+                resolve(products[index]);
+            })
+            .catch(err => reject(err));
+    });
 };
 
 // Delete Product

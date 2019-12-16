@@ -42,6 +42,12 @@
 
 ┃ ┃ ┗ 📜index.routes.js
 
+┃ ┗ 📂shared
+
+┃ ┃ ┣ 📜sharedConsts.js
+
+┃ ┃ ┗ 📜utilitis.js
+
 ┣ 📜.editorconfig
 
 ┣ 📜.env.exmple
