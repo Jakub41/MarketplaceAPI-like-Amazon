@@ -57,7 +57,24 @@ const createProduct = newProduct => {
 };
 
 // PUT Update the Product
-const updateProduct = (id, newProduct) => {};
+const updateProduct = (id, newProduct) => {
+    return new Promise((resolve, reject) => {
+        helper.mustBeInArray(products, id)
+        .then(products => {
+            console.log(products)
+            const index = products.findIndex(p => p.id === products.id)
+            id = { id: products.id }
+            const date = {
+                created_at: products.created_at,
+                updated_at: helper.newDate()
+            }
+            products[index] = { ...id, ...date, ...newProduct }
+            helper.writeJSONFile(writeFilePath, products)
+            resolve(products[index])
+        })
+        .catch(err => reject(err))
+    })
+};
 
 // Delete Product
 const deleteProduct = id => {};

@@ -25,7 +25,7 @@ router.get("/", async (req, res) => {
 });
 
 // GET one product
-router.get("/:id", check.isInt, async (req, res) => {
+router.get("/:id", check.isValidId, async (req, res) => {
     const id = req.params.id;
     await product
         .getOneProduct(id)
@@ -62,6 +62,25 @@ router.post(
             .catch(err => res.status(500).json({ message: err.message }));
     }
 );
+
+// PUT Update the product
+router.put("/:id", check.isValidId, check.updateProduct, async (req, res) => {
+    const id = req.params.id;
+    await product
+        .updateProduct(id, req.body)
+        .then(product =>
+            res.json({
+                message: `The product #${id} has been updated`,
+                content: product
+            })
+        )
+        .catch(err => {
+            if (err.status) {
+                res.status(err.status).json({ message: err.message });
+            }
+            res.status(500).json({ message: err.message });
+        });
+});
 
 // Routes
 module.exports = router;
