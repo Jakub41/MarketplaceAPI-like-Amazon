@@ -1,4 +1,4 @@
-import { matchedData, validationResult } from 'express-validator';
+const { matchedData, validationResult } = require("express-validator");
 
 const validateRules = (req, res, next) => {
     const errors = validationResult(req);
@@ -12,8 +12,10 @@ const validateRules = (req, res, next) => {
     errors.array().map(err => extractedErrors.push({ [err.param]: err.msg }));
 
     return res.status(422).json({
-        errors: extractedErrors,
+        errors: extractedErrors
     });
-}
+};
 
-export default validateRules;
+module.exports = {
+    validateRules,
+};

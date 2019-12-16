@@ -10,9 +10,6 @@ const bodyParser = require("body-parser");
 // CORS lib
 const cors = require("cors");
 
-// Express validator
-//const expressValidator = require("express-validator");
-
 // Morgan lib logger middleware https://www.npmjs.com/package/morgan
 // To log app activities a good way to keep track of what is going on
 // Useful also to the debug issues when an exception come ups
@@ -21,6 +18,9 @@ const morgan = require("morgan");
 // Defining the server/app
 const server = express();
 
+// List routes
+const listEndpoints = require("express-list-endpoints");
+
 // Using CORS
 server.use(cors());
 
@@ -28,11 +28,34 @@ server.use(cors());
 // "tiny" The minimal output of the log the default light param
 server.use(morgan("tiny"));
 
+// Body parse JSON
+// Returns middleware that only parses json
+server.use(bodyParser.json());
+
+// Express urlencoded
+// Returns middleware that only parses urlencoded with the QueryString module
+/**
+ * You NEED express.json() and express.urlencoded()
+ * for POST and PUT requests,
+ * because in both these requests you are sending data (in the form of some data object)
+ * to the server and you are asking the server to accept or store that data (object),
+ * which is enclosed in the body (i.e. req.body) of that (POST or PUT) Request
+ *
+ */
+server.use(
+    bodyParser.urlencoded({
+        extended: true
+    })
+);
+
 // Using the Body parser lib
 server.use(bodyParser.json());
 
-// Using Express validator
-// server.use(expressValidator());
+// Main Routing
+server.use(require("./src/routes/index.routes"));
+
+// Endpoints list
+console.log(listEndpoints(server));
 
 // Starting the server on env port
 server.listen(`${port}`, () => {
