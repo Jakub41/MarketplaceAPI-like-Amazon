@@ -8,7 +8,7 @@ const product = require("../../models/product");
 const check = require("../../middlewares/index.middleware");
 
 // GET all Products
-router.get("/", async (req, res) => {
+router.get("/", check.rules, async (req, res) => {
     // Await response server
     await product
         .getAllProducts()
@@ -25,7 +25,7 @@ router.get("/", async (req, res) => {
 });
 
 // GET one product
-router.get("/:id", check.isInt, async (req, res) => {
+router.get("/:id", check.isValidId, check.rules, async (req, res) => {
     const id = req.params.id;
     await product
         .getOneProduct(id)
@@ -62,6 +62,60 @@ router.post(
             .catch(err => res.status(500).json({ message: err.message }));
     }
 );
+
+// PUT Update the product
+// Validate id, fields and rules before update
+router.put(
+    "/:id",
+    check.isValidId,
+    check.updateProduct,
+    check.rules,
+    async (req, res) => {
+        // Request ID
+        const id = req.params.id;
+        // Await th product
+        await product
+            // Call model to update the product
+            .updateProduct(id, req.body)
+            // Response a message
+            .then(product =>
+                res.json({
+                    message: `The product #${id} has been updated`,
+                    content: product
+                })
+            )
+            // Errors if any
+            .catch(err => {
+                if (err.status) {
+                    res.status(err.status).json({ message: err.message });
+                }
+                res.status(500).json({ message: err.message });
+            });
+    }
+);
+
+// DELETE a product
+// Validate the ID before delete
+router.delete("/:id", check.isValidId, async (req, res) => {
+    const id = req.params.id;
+    // Await server
+    await product
+        // Model delete product
+        .deleteProduct(id)
+        .then(product =>
+            // Response
+            res.json({
+                message: `The product #${id} has been deleted`
+            })
+        )
+        // Any error
+        .catch(err => {
+            if (err.status) {
+                res.status(err.status).json({ message: err.message });
+            }
+            res.status(500).json({ message: err.message });
+        });
+});
 
 // Routes
 module.exports = router;

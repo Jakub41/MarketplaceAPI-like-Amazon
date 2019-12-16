@@ -1,5 +1,5 @@
 // Adding body module of express validator
-const { body } = require("express-validator");
+const { body, oneOf } = require("express-validator");
 
 // Product fields validations
 const productValidationRulesPOST = [
@@ -27,7 +27,41 @@ const productValidationRulesPOST = [
         .isLength({ min: 3 })
 ];
 
+const productUpdateRules = [
+    oneOf(
+        // <-- one of the following must exist
+        [
+            // Name must be min 3 characters and required
+            body("name", "Name is required and 3 characters at least")
+                .exists()
+                .isLength({ min: 3 }),
+            // Description must be min 10 characters and required
+            body(
+                "description",
+                "Description is required and 10 characters at least"
+            )
+                .exists()
+                .isLength({ min: 10 }),
+            // Brand required and min length 3
+            body("brand", "3 characters at least")
+                .exists()
+                .isLength({ min: 3 }),
+            // Image URL not required
+            body("imageUrl").optional(),
+            // Price as a number and required
+            body("price", "Price is required")
+                .exists()
+                .isNumeric(),
+            // Category not required min length 3
+            body("category", "3 characters at least")
+                .optional()
+                .isLength({ min: 3 })
+        ]
+    )
+];
+
 // Exports the required methods
 module.exports = {
-    productValidationRulesPOST
+    productValidationRulesPOST,
+    productUpdateRules,
 };
