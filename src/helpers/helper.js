@@ -32,7 +32,7 @@ const mustBeInArray = (array, id) => {
         if (!row) {
             // If not row then we reject and show an message and status 404
             reject({
-                message: "ID is not good",
+                message: "ID is not found",
                 status: "404"
             });
         }

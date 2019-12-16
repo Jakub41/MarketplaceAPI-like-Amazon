@@ -7,7 +7,39 @@ const product = require("../../models/product");
 // Validations middleware
 const check = require("../../middlewares/index.middleware");
 
-// Add a new product
+// GET all Products
+router.get("/", async (req, res) => {
+    // Await response server
+    await product
+        .getAllProducts()
+        // Result the all Products
+        .then(products => res.json(products))
+        // If any errors
+        .catch(err => {
+            if (err.status) {
+                res.status(err.status).json({ message: err.message });
+            } else {
+                res.status(500).json({ message: err.message });
+            }
+        });
+});
+
+// GET one product
+router.get("/:id", check.isInt, async (req, res) => {
+    const id = req.params.id;
+    await product
+        .getOneProduct(id)
+        .then(product => res.json(product))
+        .catch(err => {
+            if (err.status) {
+                res.status(err.status).json({ message: err.message });
+            } else {
+                res.status(500).json({ message: err.message });
+            }
+        });
+});
+
+// POST Add a new product
 // Validate the rules before start
 router.post(
     "/",
