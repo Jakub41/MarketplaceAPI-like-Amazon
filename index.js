@@ -1,5 +1,5 @@
 // Env variables from config.js
-const { port } = require("./src/config/config");
+const { port, publicFolder } = require("./src/config/config");
 
 // Express lib
 const express = require("express");
@@ -48,8 +48,7 @@ server.use(
     })
 );
 
-// Using the Body parser lib
-server.use(bodyParser.json());
+server.use(express.static(__dirname + publicFolder));
 
 // Main Routing
 server.use(require("./src/routes/index.routes"));

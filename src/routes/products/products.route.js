@@ -6,6 +6,10 @@ const router = express.Router();
 const product = require("../../models/product");
 // Validations middleware
 const check = require("../../middlewares/index.middleware");
+// Image Controller
+const ImageController = require("../../services/images/controller");
+// Image upload middleware
+const fileUpload = require("../../middlewares/image");
 
 // GET all Products
 router.get("/", check.rules, async (req, res) => {
@@ -60,6 +64,33 @@ router.post(
             )
             // Error product not created
             .catch(err => res.status(500).json({ message: err.message }));
+    }
+);
+
+// POST Upload Product picture
+router.post(
+    "/:id/upload",
+    fileUpload,
+    ImageController.save,
+    async (req, res) => {
+        //we need to check if we have an existing product with the given id
+        const products = await product.getAllProducts()
+        const product = products.find(prod => prod._id === req.params.id);
+        if (product) {
+            const fileDest = path.join(
+                __dirname,
+                "../../images/",
+                req.params.id + path.extname(req.file.originalname)
+            );
+            await fs.writeFile(fileDest, req.file.buffer);
+            product.updateAt = new Date();
+            product.imageUrl =
+                "/images/" +
+                req.params.id +
+                path.extname(req.file.originalname);
+            await writeProducts(filePath, products);
+            res.send(product);
+        } else res.status(404).send("Not found");
     }
 );
 
