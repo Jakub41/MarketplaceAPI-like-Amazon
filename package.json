@@ -40,7 +40,12 @@
   },
   "dependencies": {
     "express-validator": "^6.3.0",
+    "json2csv": "^4.5.4",
+    "node-fetch": "^2.6.0",
+    "pdfmake": "^0.1.63",
     "uuid": "^3.3.3",
-    "uuid-validate": "0.0.3"
+    "uuid-validate": "0.0.3",
+    "xml-js": "^1.6.11",
+    "xmlbuilder": "^13.0.2"
   }
 }
