@@ -39,6 +39,32 @@ router.get("/:id", check.isValidId, check.rules, async (req, res) => {
         });
 });
 
+// GET one Product and Export to PDF
+router.get("/:id/exportToPDF", check.isValidId, check.rules, async (req, res) => {
+    const id = req.params.id;
+    const description = req.body.description;
+    const name = req.body.name;
+    const brand = req.body.brand;
+    const category = req.body.category;
+    const price = req.body.price;
+    await product
+        .getOneProductExportToPdf(id, description, name, brand, category, price)
+        .then(data =>
+            // OK
+            res.status(201).json({
+                message: `PDF Created`,
+                content: data
+            })
+        )
+        .catch(err => {
+            if (err.status) {
+                res.status(err.status).json({ message: err.message });
+            } else {
+                res.status(500).json({ message: err.message });
+            }
+        });
+});
+
 // POST Add a new product
 // Validate the rules before start
 router.post(

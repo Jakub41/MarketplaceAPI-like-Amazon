@@ -1,8 +1,16 @@
 // Data Utilities
 const f = require("../shared/utilitis");
 
+const PdfPrinter = require("pdfmake");
+
+const fs = require("fs-extra");
+
 // The data file JSON
 const writeFilePath = f.productDir;
+
+const writePdfPath = f.uploadsDir;
+
+console.log(writePdfPath)
 
 // We assign the data
 let products = require(writeFilePath);
@@ -31,6 +39,49 @@ const getOneProduct = id => {
         helper
             .mustBeInArray(products, id)
             .then(product => resolve(product))
+            .catch(err => reject(err));
+    });
+};
+
+// GET One Product
+const getOneProductExportToPdf = (id, description, name, brand, category, price) => {
+    return new Promise((resolve, reject) => {
+        helper
+            .mustBeInArray(products, id)
+            .then(product => {
+                const dd = {
+                    content: [
+                        { text: "Product Info", style: "header" },
+                        { text: `${id}`, style: "subheader" },
+                        { text: `${description}`, style: "subheader" },
+                        { text: `${name}`, style: "subheader" },
+                        { text: `${brand}`, style: "subheader" },
+                        { text: `${category}`, style: "subheader" },
+                        { text: `${price}`, style: "subheader" }
+                    ]
+                };
+
+                var fonts = {
+                    Roboto: {
+                        normal: "Helvetica",
+                        bold: "Helvetica-Bold",
+                        italics: "Helvetica-Oblique",
+                        bolditalics: "Helvetica-BoldOblique"
+                    }
+                };
+
+                const printer = new PdfPrinter(fonts);
+
+                const pdfDoc = printer.createPdfKitDocument(dd, {})
+
+                pdfDoc.pipe(
+                    fs.createReadStream(f.uploadsDir, "product.pdf")
+                )
+
+                pdfDoc.end();
+
+                resolve(pdfDoc);
+            })
             .catch(err => reject(err));
     });
 };
@@ -102,6 +153,7 @@ const deleteProduct = id => {
 module.exports = {
     getAllProducts,
     getOneProduct,
+    getOneProductExportToPdf,
     createProduct,
     updateProduct,
     deleteProduct
