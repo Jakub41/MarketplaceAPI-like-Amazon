@@ -10,7 +10,7 @@ const writeFilePath = f.productDir;
 
 const writePdfPath = f.uploadsDir;
 
-console.log(writePdfPath)
+console.log("Model Wrting PDF => ", writePdfPath)
 
 // We assign the data
 let products = require(writeFilePath);
@@ -72,10 +72,10 @@ const getOneProductExportToPdf = (id, description, name, brand, category, price)
 
                 const printer = new PdfPrinter(fonts);
 
-                const pdfDoc = printer.createPdfKitDocument(dd, {})
+                const pdfDoc = printer.createPdfKitDocument(dd)
 
                 pdfDoc.pipe(
-                    fs.createReadStream(f.uploadsDir, "product.pdf")
+                    fs.createReadStream(f.uploadsDir, "product.pdf", {encoding: "utf8"})
                 )
 
                 pdfDoc.end();
