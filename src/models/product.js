@@ -1,12 +1,3 @@
-// Data Utilities
-const f = require("../shared/utilitis");
-
-// The data file JSON
-const writeFilePath = f.productDir;
-
-// We assign the data
-let products = require(writeFilePath);
-
 // We import the helpers as we need to interact with our data
 const helper = require("../helpers/helper");
 

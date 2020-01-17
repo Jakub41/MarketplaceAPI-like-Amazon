@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon -r dotenv/config ./index.js",
+    "dev": "nodemon ./index.js",
     "debug": "nodemon --inspect -r dotenv/config ./index.js"
   },
   "repository": {
@@ -40,6 +40,7 @@
   },
   "dependencies": {
     "express-validator": "^6.3.0",
+    "pg": "^7.17.1",
     "uuid": "^3.3.3",
     "uuid-validate": "0.0.3"
   }

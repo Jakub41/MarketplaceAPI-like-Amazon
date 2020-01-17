@@ -7,59 +7,83 @@ const product = require("../../models/product");
 // Validations middleware
 const check = require("../../middlewares/index.middleware");
 
+const { pool } = require("../../db/connect");
+
 // GET all Products
 router.get("/", check.rules, async (req, res) => {
-    // Await response server
-    await product
-        .getAllProducts()
-        // Result the all Products
-        .then(products => res.json(products))
-        // If any errors
-        .catch(err => {
-            if (err.status) {
-                res.status(err.status).json({ message: err.message });
-            } else {
-                res.status(500).json({ message: err.message });
-            }
-        });
+    await pool.connect().then(client => {
+        return client.query('SELECT * FROM product;')
+                .then(data => {
+                    client.release()
+                    console.log(data.rows);
+                    res.json(data.rows);
+                })
+                .catch(e => {
+                    client.release()
+                    console.log("============[ERROR]=============");
+                    console.log(e.stack);
+                    res.status(500).json({ message: e.stack });
+                });
+    });
 });
 
 // GET one product
-router.get("/:id", check.isValidId, check.rules, async (req, res) => {
+router.get("/:id", check.rules, async (req, res) => {
     const id = req.params.id;
-    await product
-        .getOneProduct(id)
-        .then(product => res.json(product))
-        .catch(err => {
-            if (err.status) {
-                res.status(err.status).json({ message: err.message });
-            } else {
-                res.status(500).json({ message: err.message });
-            }
-        });
+
+    query = 'SELECT * FROM product WHERE _id = $1';
+    values = [id];
+
+    await pool.connect().then(client => {
+        return client.query(query, values)
+                .then(data => {
+                    client.release();
+                    console.log(data.rows);
+                    res.json(data.rows[0]);
+                })
+                .catch(e => {
+                    client.release();
+                    console.log("============[ERROR]=============");
+                    console.log(e.stack);
+                    res.status(500).json({ message: e.stack });
+                });
+    });
 });
 
 // POST Add a new product
 // Validate the rules before start
-router.post(
-    "/",
-    check.newProduct,
-    check.rules,
-    check.productName,
-    (req, res) => {
-        // product
-        product
-            // Using the model to create a Product
-            .createProduct(req.body)
-            .then(data =>
-                // OK product is created
-                res.status(201).json({
-                    message: `The product #${data.id} has been created`,
-                    content: data
+
+async function add_new_product(name, description, brand) {
+    query = 'INSERT INTO product(name, description, brand) VALUES($1, $2, $3)';
+    values = [name, description, brand];
+
+    await pool.connect().then(client => {
+        return client.query(query, values)
+                .then(data => {
+                    client.release();
                 })
-            )
-            // Error product not created
-            .catch(err => res.status(500).json({ message: err.message }));
+                .catch(e => {
+                    client.release();
+                    console.log("============[ERROR]=============");
+                    console.log(e.stack);
+                    res.status(500).json({ message: e.stack });
+                });
+    });
+}
+
+router.post(
+    "/add",
+    // check.newProduct,
+    // check.rules,
+    // check.productName,
+    async (req, res) => {
+        add_new_product(req.body.name, req.body.description, req.body.brand);
+
+        console.log(req.body);
+        res.status(200).json({
+            hello: "world",
+            rishitha: "minol"
+        })
     }
 );
 
