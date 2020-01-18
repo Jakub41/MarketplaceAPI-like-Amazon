@@ -1,108 +1,158 @@
-// Data Utilities
-const f = require("../shared/utilitis");
-
-// The data file JSON
-const writeFilePath = f.productDir;
-
-// We assign the data
-let products = require(writeFilePath);
-
 // We import the helpers as we need to interact with our data
 const helper = require("../helpers/helper");
+const { pool } = require("../db/connect");
 
-// GET All Products
-const getAllProducts = () => {
-    return new Promise((resolve, reject) => {
-        // Check if w have any products data
-        if (products.length === 0) {
-            reject({
-                message: "no products available",
-                status: 202
-            });
-        }
-        resolve(products).catch(err => reject(err));
+const getAllProducts = async () => {
+    all_products = null;
+
+    await pool.connect().then(client => {
+        return client.query('SELECT * FROM product;')
+                .then(data => {
+                    client.release()
+                    // console.log(data.rows);
+                    all_products = data.rows;
+                })
+                .catch(e => {
+                    client.release()
+                    console.log("============[ERROR]=============");
+                    all_products = e;
+                });
     });
-};
+
+    return all_products;
+}
 
 // GET One Product
-const getOneProduct = id => {
-    return new Promise((resolve, reject) => {
-        // We use the helper to check the data is present in the array
-        helper
-            .mustBeInArray(products, id)
-            .then(product => resolve(product))
-            .catch(err => reject(err));
+const getOneProduct = async (id) => {
+    product = null;
+
+    sql_ = "SELECT * FROM product WHERE _id = $1";
+    sql_values = [id];
+
+    await pool.connect().then(client => {
+        return client.query(sql_, sql_values)
+                .then(data => {
+                    client.release()
+                    // console.log(data.rows);
+                    product = data.rows[0];
+                })
+                .catch(e => {
+                    client.release()
+                    console.log("============[ERROR]=============");
+                    product = e;
+                });
     });
+
+    return product;
 };
 
-// POST Create the Product
-const createProduct = newProduct => {
-    return new Promise((resolve, reject) => {
-        // We create new ID with helper
-        const id = { id: helper.getNewId() };
-        // We create a new date time with helper
-        const date = {
-            created_at: helper.newDate(),
-            updated_at: helper.newDate()
-        };
-        // We build our query
-        newProduct = { ...id, ...date, ...newProduct };
-        // We add t the array
-        products.push(newProduct);
-        // Helper write to JSON the data to file
-        helper.writeJSONFile(writeFilePath, products);
-        // Resolve if ok Reject with error if wrong
-        resolve(newProduct).catch(err => reject(err));
+const add_new_product = async (name, description, brand, image_url, price, category) => {
+    query = 'INSERT INTO product(name, description, brand, image_url, price, category, created_at, updated_at) ' +
+            'VALUES($1, $2, $3, $4, $5, $6, $7, $8);';
+    values = [name, description, brand, image_url, price, category, helper.newDate(), helper.newDate()];
+
+    error = 1;
+
+    await pool.connect().then(client => {
+        return client.query(query, values)
+                .then(data => {
+                    client.release();
+                })
+                .catch(e => {
+                    client.release();
+                    console.log("============[ERROR]=============");
+                    console.log(e.stack);
+                    error = 0;
+                });
     });
+
+    return error;
+}
+
+// Get one product by it's name
+const get_single_product_by_name = async (name) => {
+    product = null;
+
+    sql_ = "SELECT * FROM product WHERE name = $1";
+    sql_values = [name];
+
+    await pool.connect().then(client => {
+        return client.query(sql_, sql_values)
+                .then(data => {
+                    client.release()
+                    // console.log(data.rows);
+                    product = data.rows[0];
+                })
+                .catch(e => {
+                    client.release()
+                    console.log("============[ERROR]=============");
+                    console.log(e);
+                });
+    });
+
+    return product;
 };
 
 // PUT Update the Product
-const updateProduct = (id, newProduct) => {
-    return new Promise((resolve, reject) => {
-        helper
-            .mustBeInArray(products, id)
-            .then(product => {
-                //pass product as a result instead of products
-                //now it should show the products array
-                //the following returns the element that passes the check
-                const index = products.findIndex(prod => prod.id == id);
-                let updateId = { id: product.id };
-                const date = {
-                    created_at: product.created_at,
-                    // Update only the updated at date time
-                    updated_at: helper.newDate()
-                };
-                // Merging new data with old data
-                let updatedProduct = { ...products[index], ...newProduct };
-                products[index] = { ...updateId, ...updatedProduct, ...date };
-                helper.writeJSONFile(writeFilePath, products);
-                resolve(products[index]);
-            })
-            .catch(err => reject(err));
-    });
-};
+const updateProduct = async (_id, req_body) => {
+    query = 'UPDATE product ' +
+            'SET ' +
+            '   name = $2,' +
+            '   description = $3,' +
+            '   brand = $4,' +
+            '   image_url = $5,' +
+            '   price = $6,' +
+            '   category = $7,' +
+            '   updated_at = $8 ' +
+            'WHERE ' +
+            '   product._id = $1;';
+    values = [_id, req_body.name, req_body.description, req_body.brand, req_body.imageUrl, req_body.price, req_body.category, helper.newDate()];
 
-// Delete Product
-const deleteProduct = id => {
-    return new Promise((resolve, reject) => {
-        // Check if it is part of an array
-        helper
-            .mustBeInArray(products, id)
-            // Filter the product id to delete and write
-            .then(() => {
-                products = products.filter(p => p.id !== id);
-                helper.writeJSONFile(writeFilePath, products);
-                resolve();
-            })
-            .catch(err => reject(err));
+    error = 1;
+    await pool.connect().then(client => {
+        return client.query(query, values)
+                .then(data => {
+                    client.release();
+                })
+                .catch(e => {
+                    client.release();
+                    console.log("============[ERROR]========1=====");
+                    console.log(e.stack);
+                    error = 0;
+                });
     });
-};
+
+    return error;
+}
+
+const deleteProduct = async (_id) => {
+    query = 'DELETE FROM product ' +
+            'WHERE product._id = $1;';
+    values = [_id];
+
+    error = 1;
+    await pool.connect().then(client => {
+        return client.query(query, values)
+                .then(data => {
+                    client.release();
+                })
+                .catch(e => {
+                    client.release();
+                    console.log("============[ERROR]=============");
+                    console.log(e.stack);
+                    error = 0;
+                });
+    });
+
+    return error;
+}
 
 // Exporting the modules
 module.exports = {
     getAllProducts,
     getOneProduct,
-    createProduct,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    add_new_product,
+    get_single_product_by_name
 };

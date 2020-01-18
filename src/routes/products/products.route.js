@@ -7,114 +7,88 @@ const product = require("../../models/product");
 // Validations middleware
 const check = require("../../middlewares/index.middleware");
 
+const { pool } = require("../../db/connect");
+
+const helper = require("../../helpers/helper");
+
 // GET all Products
 router.get("/", check.rules, async (req, res) => {
-    // Await response server
-    await product
-        .getAllProducts()
-        // Result the all Products
-        .then(products => res.json(products))
-        // If any errors
-        .catch(err => {
-            if (err.status) {
-                res.status(err.status).json({ message: err.message });
-            } else {
-                res.status(500).json({ message: err.message });
-            }
-        });
+    respon = helper.common_response();
+    all_products = await product.getAllProducts();
+
+    respon.data = all_products;
+
+    res.status(respon.status).json(respon);
 });
 
 // GET one product
-router.get("/:id", check.isValidId, check.rules, async (req, res) => {
-    const id = req.params.id;
-    await product
-        .getOneProduct(id)
-        .then(product => res.json(product))
-        .catch(err => {
-            if (err.status) {
-                res.status(err.status).json({ message: err.message });
-            } else {
-                res.status(500).json({ message: err.message });
-            }
-        });
+router.get("/:id", check.rules, async (req, res) => {
+    respon = helper.common_response();
+    one_product = await product.getOneProduct(req.params.id);
+
+    if (one_product._id) {
+        respon.status = 200;
+        respon.data = one_product;
+    } else {
+        respon.status = 500;
+        respon.message = "Internal error occured";
+    }
+
+    res.status(respon.status).json(respon);
 });
 
 // POST Add a new product
 // Validate the rules before start
-router.post(
-    "/",
-    check.newProduct,
-    check.rules,
-    check.productName,
-    (req, res) => {
-        // product
-        product
-            // Using the model to create a Product
-            .createProduct(req.body)
-            .then(data =>
-                // OK product is created
-                res.status(201).json({
-                    message: `The product #${data.id} has been created`,
-                    content: data
-                })
-            )
-            // Error product not created
-            .catch(err => res.status(500).json({ message: err.message }));
+router.post("/add", check.rules, check.newProduct, check.productName, async (req, res) => {
+    respon = helper.common_response();
+
+    is_okay = await product.add_new_product(req.body.name, req.body.description, req.body.brand,
+                                            req.body.imageUrl, req.body.price, req.body.category);
+    if (is_okay) {
+        respon.status = 201;
+        respon.message = "successfully added.";
+    } else {
+        respon.status = 500;
+        respon.message = "Error in adding";
     }
-);
+
+    res.status(respon.status).json(respon);
+});
 
 // PUT Update the product
 // Validate id, fields and rules before update
-router.put(
-    "/:id",
-    check.isValidId,
-    check.updateProduct,
-    check.rules,
-    async (req, res) => {
-        // Request ID
-        const id = req.params.id;
-        // Await th product
-        await product
-            // Call model to update the product
-            .updateProduct(id, req.body)
-            // Response a message
-            .then(product =>
-                res.json({
-                    message: `The product #${id} has been updated`,
-                    content: product
-                })
-            )
-            // Errors if any
-            .catch(err => {
-                if (err.status) {
-                    res.status(err.status).json({ message: err.message });
-                }
-                res.status(500).json({ message: err.message });
-            });
+router.put("/:id", check.rules, /* check.isValidId,*/ check.updateProduct, check.productName, async (req, res) => {
+    respon = helper.common_response();
+    const id = req.params.id;
+
+    is_okay = await product.updateProduct(id, req.body);
+    if (is_okay) {
+        respon.status = 201;
+        respon.message = `The product #${id} has been updated`;
+    } else {
+        respon.status = 500;
+        respon.message = "Error in updating the product";
     }
-);
+
+    res.status(respon.status).json(respon);
+});
 
 // DELETE a product
 // Validate the ID before delete
-router.delete("/:id", check.isValidId, async (req, res) => {
+router.delete("/:id", /* check.isValidId, */ async (req, res) => {
+    respon = helper.common_response();
     const id = req.params.id;
-    // Await server
-    await product
-        // Model delete product
-        .deleteProduct(id)
-        .then(product =>
-            // Response
-            res.json({
-                message: `The product #${id} has been deleted`
-            })
-        )
-        // Any error
-        .catch(err => {
-            if (err.status) {
-                res.status(err.status).json({ message: err.message });
-            }
-            res.status(500).json({ message: err.message });
-        });
+
+    is_okay = await product.deleteProduct(id);
+    if (is_okay) {
+        respon.status = 201;
+        respon.message = `The product #${id} has been deleted`;
+    } else {
+        respon.status = 500;
+        respon.message = "Error in deleting the product";
+    }
+
+    res.status(respon.status).json(respon);
 });
 
 // Routes
