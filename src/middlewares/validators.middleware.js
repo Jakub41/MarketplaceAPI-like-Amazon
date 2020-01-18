@@ -32,24 +32,24 @@ const productUpdateRules = [
         // <-- one of the following must exist
         [
             // Name must be min 3 characters and required
-            body("name", "Name is required and 3 characters at least")
+            body("name", "Name is required and 3 characters at least")  // =*=
                 .exists()
                 .isLength({ min: 3 }),
             // Description must be min 10 characters and required
-            body(
+            body(   // =*=
                 "description",
                 "Description is required and 10 characters at least"
             )
                 .exists()
                 .isLength({ min: 10 }),
             // Brand required and min length 3
-            body("brand", "3 characters at least")
+            body("brand", "3 characters at least")  // =*=
                 .exists()
                 .isLength({ min: 3 }),
             // Image URL not required
             body("imageUrl").optional(),
             // Price as a number and required
-            body("price", "Price is required")
+            body("price", "Price is required")  // =*=
                 .exists()
                 .isNumeric(),
             // Category not required min length 3
